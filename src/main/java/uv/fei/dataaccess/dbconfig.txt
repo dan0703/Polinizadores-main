@@ -1,0 +1,3 @@
+DireccionBD = jdbc:mysql://localhost:3306/polinizadoresdb
+Usuario = polinizador
+Contrasenia = lOOsyW539#Sf

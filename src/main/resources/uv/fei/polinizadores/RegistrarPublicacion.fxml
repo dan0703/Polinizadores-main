@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="465.0" prefWidth="702.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uv.fei.polinizadores.RegistrarPublicacion">
+    <children>
+        <Label layoutX="31.0" layoutY="81.0" prefHeight="36.0" prefWidth="68.0" text="TITULO:">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+        <TextField fx:id="tituloField" layoutX="105.0" layoutY="87.0" prefHeight="25.0" prefWidth="205.0" promptText="INGRESA EL TITULO" />
+        <Button fx:id="buttonPublish" layoutX="615.0" layoutY="422.0" mnemonicParsing="false" onAction="#buttonPublish_Clicked" style="-fx-background-color: #001CFF;" text="Publicar" textFill="WHITE" />
+        <Button fx:id="buttonCancel" layoutX="18.0" layoutY="422.0" mnemonicParsing="false" onAction="#ButtonCancel_Clicked" style="-fx-background-color: #FF6666;" text="Cancelar" textFill="WHITE" />
+        <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" layoutX="18.0" layoutY="132.0" prefHeight="272.0" prefWidth="656.0" />
+        <Label layoutX="31.0" layoutY="33.0" text="Autor:">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+        </Label>
+        <Label fx:id="labelAutor" layoutX="99.0" layoutY="33.0">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Label>
+    </children>
+
+</AnchorPane>
