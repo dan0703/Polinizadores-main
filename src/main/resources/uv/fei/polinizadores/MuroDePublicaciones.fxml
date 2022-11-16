@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -20,14 +21,14 @@
             <Image url="@../imagenes/cicloPolinizadores.png" />
          </image>
       </ImageView>
-      <AnchorPane layoutX="7.0" layoutY="6.0" prefHeight="335.0" prefWidth="594.0">
+      <AnchorPane layoutX="7.0" layoutY="6.0" prefHeight="400.0" prefWidth="594.0">
          <children>
             <ChoiceBox fx:id="cbPublicaciones" layoutX="6.0" layoutY="53.0" onMouseClicked="#seleccionarPublicacion" prefWidth="150.0" />
             <Text layoutX="11.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Selecciona un articulo" wrappingWidth="139.13671875" />
-            <TextFlow fx:id="tfPublicacion" layoutX="156.0" layoutY="105.0" prefHeight="282.0" prefWidth="448.0" style="-fx-background-color: #ffff00; -fx-background-radius: 100;" textAlignment="CENTER" />
             <Button fx:id="btnVer" layoutX="6.0" layoutY="93.0" mnemonicParsing="false" onAction="#clicVerPublicacion" text="Ver publicacion" />
-            <Button fx:id="buttonNewPublication" layoutX="188.0" layoutY="53.0" mnemonicParsing="false" onAction="#buttonNewPublicationClic" text="Nueva Publicacion" />
+            <Button fx:id="buttonNewPublication" layoutX="188.0" layoutY="53.0" mnemonicParsing="false" onAction="#buttonPublicationsClic" text="Nueva Publicacion" />
             <Button fx:id="buttonLogin" layoutX="490.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonLoginClic" text="Iniciar Sesion" />
+            <WebView fx:id="webview" layoutX="181.0" layoutY="121.0" prefHeight="247.0" prefWidth="400.0" />
          </children>
       </AnchorPane>
    </children>

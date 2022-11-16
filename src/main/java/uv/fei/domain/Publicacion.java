@@ -1,12 +1,15 @@
 package uv.fei.domain;
 
+import javafx.scene.control.CheckBox;
+
 public class Publicacion {
     private int id;
     private String titulo;
     private String fecha;
     private String descripcion;
     private String referencia;
-    private boolean estado;
+    private CheckBox estado;
+
     public Usuario usuario;
 
 
@@ -46,11 +49,11 @@ public class Publicacion {
         return id;
     }
 
-    public boolean isEstado() {
+    public CheckBox isEstado() {
         return estado;
     }
 
-    public void setEstado(boolean estado) {
+    public void setEstado(CheckBox estado) {
         this.estado = estado;
     }
 
@@ -64,7 +67,7 @@ public class Publicacion {
         this.fecha = "";
         this.descripcion = "";
         this.referencia = "";
-        this.estado = false;
+        this.estado = new CheckBox();
         this.usuario = new Usuario();
     }
 
