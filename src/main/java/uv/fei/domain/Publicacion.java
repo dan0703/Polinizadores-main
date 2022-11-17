@@ -8,7 +8,7 @@ public class Publicacion {
     private String fecha;
     private String descripcion;
     private String referencia;
-    private CheckBox estado;
+    private String estado;
 
     public Usuario usuario;
 
@@ -49,11 +49,11 @@ public class Publicacion {
         return id;
     }
 
-    public CheckBox isEstado() {
+    public String isEstado() {
         return estado;
     }
 
-    public void setEstado(CheckBox estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
@@ -67,7 +67,7 @@ public class Publicacion {
         this.fecha = "";
         this.descripcion = "";
         this.referencia = "";
-        this.estado = new CheckBox();
+        this.estado = "";
         this.usuario = new Usuario();
     }
 

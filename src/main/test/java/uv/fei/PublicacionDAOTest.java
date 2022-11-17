@@ -18,6 +18,5 @@ public class PublicacionDAOTest {
         for (Publicacion publicacion : publicacionDAO.obtenerPublicaciones()) {
             System.out.println(publicacion);
         }
-
     }
 }

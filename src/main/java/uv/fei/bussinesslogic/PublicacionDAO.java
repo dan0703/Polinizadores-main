@@ -4,7 +4,9 @@ import javafx.scene.control.CheckBox;
 import uv.fei.dataaccess.ConexionBD;
 import uv.fei.domain.Publicacion;
 import uv.fei.domain.Singleton;
+import uv.fei.domain.TablaPublicaciones;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +18,11 @@ public class PublicacionDAO implements IPublicacionDAO{
         ConexionBD conexionBD = new ConexionBD();
         List<Publicacion> publicaciones = new ArrayList<>();
         try (Connection connection = conexionBD.openConnection()){
-            String query = "SELECT * FROM Publicacion";
+            String query = "SELECT * FROM Publicacion Where estado = 1 ";
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
             if (!resultSet.next()){
-                throw new SQLException("Error al obtener las publicaciones");
+                throw new SQLException("No se encontraron publicaciones");
             }else {
                 do {
                     publicaciones.add(getPublicacion(resultSet));
@@ -76,6 +78,48 @@ public class PublicacionDAO implements IPublicacionDAO{
         }
     }
 
+    @Override
+    public List<TablaPublicaciones> obtenerPublicacionesParaTabla() throws SQLException {
+        ConexionBD conexionBD = new ConexionBD();
+        List<TablaPublicaciones> publicaciones = new ArrayList<>();
+        try (Connection connection = conexionBD.openConnection()){
+            String query = "SELECT nombre, titulo, fecha, estado, publicacion.id from publicacion inner join usuario on publicacion.idUsuario= usuario.id";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            if (!resultSet.next()){
+                throw new SQLException("Error al obtener las publicaciones");
+
+            }else {
+                int id;
+                String titulo;
+                String fecha;
+                String autor;
+                String estado;
+
+                do {
+                    id = resultSet.getInt("id");
+                    titulo = resultSet.getString("titulo");
+                    fecha = resultSet.getString("fecha");
+                    autor = resultSet.getString("nombre");
+                    estado = (resultSet.getInt("estado")==1?"Publicado":"Sin Publicar");
+
+                    TablaPublicaciones publicacion = new TablaPublicaciones();
+                    publicacion.setId(id);
+                    publicacion.setTituloTabla(titulo);
+                    publicacion.setFechaTabla(fecha);
+                    publicacion.setAutorTabla(autor);
+                    publicacion.setEstadoTabla(estado);
+
+                    publicaciones.add(publicacion);
+
+                }while (resultSet.next());
+            }
+        }catch (SQLException sqlException){
+            throw sqlException;
+        }
+        return publicaciones;
+    }
+
     private Publicacion getPublicacion(ResultSet resultSet) throws SQLException {
         Publicacion publicacion = new Publicacion();
         int id;
@@ -83,28 +127,21 @@ public class PublicacionDAO implements IPublicacionDAO{
         String fecha;
         String descripcion;
         String referencia;
-        int estado;
+        String estado;
         try {
             id = resultSet.getInt("id");
             titulo = resultSet.getString("titulo");
             fecha = resultSet.getString("fecha");
             descripcion = resultSet.getString("descripcion");
             referencia = resultSet.getString("referencias");
-            estado = resultSet.getInt("estado");
+            estado = (resultSet.getInt("estado")==0?"Publicado":"Sin Publicar");
 
             publicacion.setId(id);
             publicacion.setTitulo(titulo);
             publicacion.setFecha(fecha);
             publicacion.setDescripcion(descripcion);
             publicacion.setReferencia(referencia);
-            CheckBox checkBox = new CheckBox();
-            if (estado==1){
-                checkBox.setSelected(true);
-            }else
-            {
-                checkBox.setSelected(false);
-            }
-            publicacion.setEstado(checkBox);
+            publicacion.setEstado(estado);
 
         } catch (SQLException e) {
             throw e;

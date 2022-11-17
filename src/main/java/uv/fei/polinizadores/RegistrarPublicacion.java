@@ -73,7 +73,7 @@ public class RegistrarPublicacion implements Initializable {
         publicacion.setTitulo(tituloField.getText());
         publicacion.setDescripcion(htmlEditor.getHtmlText());
         publicacion.setFecha(fecha.format(new Date()));
-        publicacion.setEstado(new CheckBox());
+        publicacion.setEstado("");
         publicacion.setReferencia("");
 
         try {

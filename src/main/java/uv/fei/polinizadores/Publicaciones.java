@@ -1,6 +1,8 @@
 package uv.fei.polinizadores;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -10,87 +12,99 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import uv.fei.bussinesslogic.PublicacionDAO;
 import uv.fei.domain.Publicacion;
+import uv.fei.domain.TablaPublicaciones;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Publicaciones implements Initializable {
-    public ComboBox comboEstado;
-    public TableView<Publicacion> tablaPublicaciones;
-    public TableColumn<Publicacion, String> columnaNombretable;
-    public TableColumn<Publicacion, Integer> columnaId;
-    public TableColumn<Publicacion, CheckBox> columnaEstado;
+    public TableView<TablaPublicaciones> tablaPublicaciones;
+    public TableColumn<TablaPublicaciones, String> columnaNombretable;
+    public TableColumn<TablaPublicaciones, Integer> columnaId;
+    public TableColumn<TablaPublicaciones, String> columnaEstado;
+    @FXML
+    private TableColumn<TablaPublicaciones, String> columnaFecha;
+
     @FXML
     private TextField textFieldSearch;
-    public Button btnGuardar;
-    private List<Publicacion> listaPublicaciones = new ArrayList();
+    @FXML
+    private Button buttonBack;;
+    private List<TablaPublicaciones> listaPublicaciones = new ArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         llenarListaPublicaciones();
-        //llenarTabla();
-    }
-    @FXML
-    void comboEstadoOnAction(ActionEvent event) {
-
-    }
-
-    public void clicGuardar(ActionEvent actionEvent) {
-        /*boolean flag = false;
-        boolean message = true;
-        boolean unassignation = false;
-        String studentStaffNumber = "";
-        PublicacionDAO publicacionDAO = new PublicacionDAO();
-        Publicacion publicacion = new Publicacion();
-
-        for (int i = 0; i < tablaPublicaciones.getItems().size(); i++){
-            unassignation = tablaPublicaciones.getItems().get(i).isEstado();
-            publicacion = tablaPublicaciones.getSelectionModel().getSelectedItem();
-            //Metodo para guardar las publicaciones
-            try {
-                publicacionDAO.actualizarPublicacion(publicacion);
-            } catch (SQLException e) {
-                System.out.println("No se pudo actualizar la publicacion con id "+publicacion.getId());
+        tablaPublicaciones.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText(null);
+            alert.setTitle("Desea guardar los cambios");
+            alert.setContentText("¿Deseas realmente confirmar?");
+            Optional<ButtonType> action = alert.showAndWait();
+            int estado =0;
+            if (action.get()==ButtonType.OK){
+                if (tablaPublicaciones.getSelectionModel().getSelectedItem().getEstadoTabla().equals("Publicado")){
+                    tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Sin Publicar");
+                    JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Sin publicar");
+                }else{
+                    tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Publicado");
+                    JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Publicado");
+                    estado=1;
+                }
+                tablaPublicaciones.refresh();
+                PublicacionDAO publicacionDAO = new PublicacionDAO();
+                try {
+                    publicacionDAO.actualizarPublicacion(estado,tablaPublicaciones.getSelectionModel().getSelectedItem().getId());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }*/
+        });
     }
 
     private void llenarListaPublicaciones(){
         PublicacionDAO publicacionDAO = new PublicacionDAO();
         try {
-            listaPublicaciones = publicacionDAO.obtenerPublicaciones();
-            columnaId.setCellValueFactory(new PropertyValueFactory<>("id"));
-            columnaNombretable.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-            columnaEstado.setCellValueFactory(new PropertyValueFactory<Publicacion, CheckBox>("estado"));
-            columnaEstado.setEditable(true);
+            listaPublicaciones = publicacionDAO.obtenerPublicacionesParaTabla();
+            columnaId.setCellValueFactory(new PropertyValueFactory<>("autorTabla"));
+            columnaNombretable.setCellValueFactory(new PropertyValueFactory<>("tituloTabla"));
+            columnaEstado.setCellValueFactory(new PropertyValueFactory<TablaPublicaciones, String>("estadoTabla"));
+            columnaFecha.setCellValueFactory(new PropertyValueFactory<TablaPublicaciones,String>("fechaTabla"));
 
-            ObservableList<Publicacion> observableList = FXCollections.observableList(listaPublicaciones);
-            FilteredList<Publicacion> filteredData = new FilteredList<>(observableList, b -> true);
-
+            ObservableList<TablaPublicaciones> observableList = FXCollections.observableList(listaPublicaciones);
+            FilteredList<TablaPublicaciones> filteredData = new FilteredList<>(observableList, b -> true);
             textFieldSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-                filteredData.setPredicate(publicaciones -> {
+                filteredData.setPredicate(tablaPublicacion -> {
                     if (newValue == null || newValue.isEmpty()) {
                         llenarListaPublicaciones();
                     }
                     String lowerCaseFilter = newValue.toLowerCase();
-                    if (publicaciones.getTitulo().toLowerCase().indexOf(lowerCaseFilter) != -1 ) {
+                    if (tablaPublicacion.getTituloTabla().toLowerCase().indexOf(lowerCaseFilter) != -1 ) {
                         return true;
-                    } else{
+                    } else if (tablaPublicacion.getEstadoTabla().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                        return true;
+                    } else if (tablaPublicacion.getAutorTabla().toLowerCase().indexOf(lowerCaseFilter) != -1) {
+                        return true;
+                    }else {
                         return false;
                     }
                 });
             });
-            SortedList<Publicacion> sortedData = new SortedList<>(filteredData);
+            SortedList<TablaPublicaciones> sortedData = new SortedList<>(filteredData);
             sortedData.comparatorProperty().bind(tablaPublicaciones.comparatorProperty());
             tablaPublicaciones.setItems(sortedData);
         } catch (SQLException e) {
@@ -98,16 +112,6 @@ public class Publicaciones implements Initializable {
         }
     }
 
-    private void llenarTabla(){
-        columnaId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        columnaNombretable.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-        columnaEstado.setCellValueFactory(new PropertyValueFactory<Publicacion, CheckBox>("estado"));
-        columnaEstado.setEditable(true);
-
-        ObservableList<Publicacion> observableList = FXCollections.observableList(listaPublicaciones);
-        tablaPublicaciones.setItems(observableList);
-        tablaPublicaciones.setEditable(false);
-    }
     @FXML
     void buttonBackClic(ActionEvent event) {
         openWindowMenu("MuroDePublicaciones.fxml", "Muro de Publicaciones");
@@ -117,12 +121,38 @@ public class Publicaciones implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(getClass().getResource(fxml));
             Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) this.btnGuardar.getScene().getWindow();
+            Stage stage = (Stage) this.buttonBack.getScene().getWindow();
             stage.setTitle(name);
             stage.setScene(scene);
             stage.show();
         }catch(IOException ioException){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ioException);
+        }
+    }
+    @FXML
+    void tableOnStart(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("Desea guardar los cambios");
+        alert.setContentText("¿Deseas realmente confirmar?");
+        Optional<ButtonType> action = alert.showAndWait();
+        int estado =0;
+        if (action.get()==ButtonType.OK){
+            if (tablaPublicaciones.getSelectionModel().getSelectedItem().getEstadoTabla().equals("Publicado")){
+                tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Sin Publicar");
+                JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Sin publicar");
+            }else{
+                tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Publicado");
+                JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Publicado");
+                estado=1;
+            }
+            tablaPublicaciones.refresh();
+            PublicacionDAO publicacionDAO = new PublicacionDAO();
+            try {
+                publicacionDAO.actualizarPublicacion(estado,tablaPublicaciones.getSelectionModel().getSelectedItem().getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

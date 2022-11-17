@@ -7,8 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -22,16 +21,17 @@ import uv.fei.domain.Publicacion;
 import uv.fei.domain.Singleton;
 
 import javax.swing.*;
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MuroDePublicaciones implements Initializable {
-    public TextFlow tfPublicacion;
     @FXML
     private Button buttonLogin;
     @FXML
@@ -41,10 +41,16 @@ public class MuroDePublicaciones implements Initializable {
     public ChoiceBox<Publicacion> cbPublicaciones;
     public ImageView ivImagen;
     public Button btnVer;
+    @FXML
+    private Label labelTitulo;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        llenarListaDePublicaciones();
+        try {
+            llenarListaDePublicaciones();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"no existen publicaciones disponibles");
+        }
         btnVer.setDisable(false);
         if (Singleton.rol().equals("Administrador")){
             buttonNewPublication.setText("Administrar Publicaciones");
@@ -57,22 +63,20 @@ public class MuroDePublicaciones implements Initializable {
             buttonLogin.setText("Iniciar Sesion");
         }
     }
-
     @FXML
     void buttonLoginClic(ActionEvent event) {
         openWindow("Login.fxml","Login");
     }
 
-    public void llenarListaDePublicaciones(){
+    public void llenarListaDePublicaciones() throws SQLException{
         PublicacionDAO publicacionDAO = new PublicacionDAO();
         List<Publicacion> publicaciones = null;
-        ObservableList<Publicacion> publicacionObservableList =
-                FXCollections.observableArrayList();
+        ObservableList<Publicacion> publicacionObservableList = FXCollections.observableArrayList();
 
         try {
             publicaciones = publicacionDAO.obtenerPublicaciones();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw e;
         }
         if (publicaciones != null) {
             publicacionObservableList.addAll(publicaciones);
@@ -89,6 +93,7 @@ public class MuroDePublicaciones implements Initializable {
         Publicacion publicacion = cbPublicaciones.getValue();
         WebEngine webEngine = webview.getEngine();
         webEngine.loadContent(publicacion.getDescripcion());
+        labelTitulo.setText(publicacion.getTitulo());
     }
     @FXML
     void buttonPublicationsClic(ActionEvent event) {
@@ -114,4 +119,5 @@ public class MuroDePublicaciones implements Initializable {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ioException);
         }
     }
+
 }

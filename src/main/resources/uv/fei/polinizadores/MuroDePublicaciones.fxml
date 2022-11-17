@@ -29,6 +29,11 @@
             <Button fx:id="buttonNewPublication" layoutX="188.0" layoutY="53.0" mnemonicParsing="false" onAction="#buttonPublicationsClic" text="Nueva Publicacion" />
             <Button fx:id="buttonLogin" layoutX="490.0" layoutY="10.0" mnemonicParsing="false" onAction="#buttonLoginClic" text="Iniciar Sesion" />
             <WebView fx:id="webview" layoutX="181.0" layoutY="121.0" prefHeight="247.0" prefWidth="400.0" />
+            <Label fx:id="labelTitulo" layoutX="367.0" layoutY="97.0" style="-fx-background-color: ;">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>
