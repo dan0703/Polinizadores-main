@@ -7,47 +7,54 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import uv.fei.bussinesslogic.PublicacionDAO;
 import uv.fei.domain.Publicacion;
 import uv.fei.domain.Singleton;
 
+import javax.swing.*;
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MuroDePublicaciones implements Initializable {
-    public TextFlow tfPublicacion;
-
     @FXML
     private Button buttonLogin;
+    @FXML
+    private WebView webview;
     @FXML
     private Button buttonNewPublication;
     public ChoiceBox<Publicacion> cbPublicaciones;
     public ImageView ivImagen;
     public Button btnVer;
-
-    private Text titulo;
-    private Text descripcion;
+    @FXML
+    private Label labelTitulo;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-//        tfPublicacion.getChildren().removeAll(text_1,text_2);
-        llenarListaDePublicaciones();
+        try {
+            llenarListaDePublicaciones();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null,"no existen publicaciones disponibles");
+        }
         btnVer.setDisable(false);
-
+        if (Singleton.rol().equals("Administrador")){
+            buttonNewPublication.setText("Administrar Publicaciones");
+        }
         buttonNewPublication.setVisible(!Singleton.rol().isEmpty());
         buttonNewPublication.setDisable(Singleton.rol().isEmpty());
         if(!Singleton.rol().isEmpty()){
@@ -56,32 +63,20 @@ public class MuroDePublicaciones implements Initializable {
             buttonLogin.setText("Iniciar Sesion");
         }
     }
-
     @FXML
     void buttonLoginClic(ActionEvent event) {
-        try{
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("Login.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Stage stage = (Stage) this.buttonNewPublication.getScene().getWindow();
-            stage.setTitle("Muro de Publicaciones");
-            stage.setScene(scene);
-            stage.show();
-        }catch(IOException ioException){
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ioException);
-        }
+        openWindow("Login.fxml","Login");
     }
 
-    public void llenarListaDePublicaciones(){
+    public void llenarListaDePublicaciones() throws SQLException{
         PublicacionDAO publicacionDAO = new PublicacionDAO();
         List<Publicacion> publicaciones = null;
-        ObservableList<Publicacion> publicacionObservableList =
-                FXCollections.observableArrayList();
+        ObservableList<Publicacion> publicacionObservableList = FXCollections.observableArrayList();
 
         try {
             publicaciones = publicacionDAO.obtenerPublicaciones();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw e;
         }
         if (publicaciones != null) {
             publicacionObservableList.addAll(publicaciones);
@@ -95,26 +90,34 @@ public class MuroDePublicaciones implements Initializable {
     }
 
     public void clicVerPublicacion(ActionEvent actionEvent) {
-        tfPublicacion.getChildren().removeAll(titulo,descripcion);
         Publicacion publicacion = cbPublicaciones.getValue();
-        titulo  = new Text(publicacion.getTitulo() +"\n");
-        titulo.setFill(Color.BLACK);
-        descripcion = new Text(publicacion.getDescripcion() + "\n");
-        descripcion.setFill(Color.BLACK);
-        tfPublicacion.getChildren().addAll(titulo, descripcion);
+        WebEngine webEngine = webview.getEngine();
+        webEngine.loadContent(publicacion.getDescripcion());
+        labelTitulo.setText(publicacion.getTitulo());
     }
     @FXML
-    void buttonNewPublicationClic(ActionEvent event) {
+    void buttonPublicationsClic(ActionEvent event) {
+        if (Singleton.rol().equals("Administrador")){
+            openWindow("publicaciones.fxml","Administrar publicaciones");
+        }else
+        {
+            JOptionPane.showMessageDialog(null,Singleton.rol());
+            openWindow("RegistrarPublicacion.fxml", "Registrar Publicacion");
+        }
+    }
+
+    public  void openWindow(String fxml, String titulo){
         try{
             FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(getClass().getResource("RegistrarPublicacion.fxml"));
+            fxmlLoader.setLocation(getClass().getResource(fxml));
             Scene scene = new Scene(fxmlLoader.load());
             Stage stage = (Stage) this.buttonNewPublication.getScene().getWindow();
-            stage.setTitle("Muro de Publicaciones");
+            stage.setTitle(titulo);
             stage.setScene(scene);
             stage.show();
         }catch(IOException ioException){
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ioException);
         }
     }
+
 }

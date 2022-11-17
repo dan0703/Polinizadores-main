@@ -5,10 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import uv.fei.bussinesslogic.PublicacionDAO;
@@ -76,7 +73,7 @@ public class RegistrarPublicacion implements Initializable {
         publicacion.setTitulo(tituloField.getText());
         publicacion.setDescripcion(htmlEditor.getHtmlText());
         publicacion.setFecha(fecha.format(new Date()));
-        publicacion.setEstado(false);
+        publicacion.setEstado("");
         publicacion.setReferencia("");
 
         try {
