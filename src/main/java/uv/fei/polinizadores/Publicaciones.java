@@ -1,8 +1,6 @@
 package uv.fei.polinizadores;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -12,13 +10,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import uv.fei.bussinesslogic.PublicacionDAO;
-import uv.fei.domain.Publicacion;
 import uv.fei.domain.TablaPublicaciones;
 
 import javax.swing.*;
@@ -39,7 +34,6 @@ public class Publicaciones implements Initializable {
     public TableColumn<TablaPublicaciones, String> columnaEstado;
     @FXML
     private TableColumn<TablaPublicaciones, String> columnaFecha;
-
     @FXML
     private TextField textFieldSearch;
     @FXML
@@ -49,31 +43,6 @@ public class Publicaciones implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         llenarListaPublicaciones();
-        tablaPublicaciones.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText(null);
-            alert.setTitle("Desea guardar los cambios");
-            alert.setContentText("¿Deseas realmente confirmar?");
-            Optional<ButtonType> action = alert.showAndWait();
-            int estado =0;
-            if (action.get()==ButtonType.OK){
-                if (tablaPublicaciones.getSelectionModel().getSelectedItem().getEstadoTabla().equals("Publicado")){
-                    tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Sin Publicar");
-                    JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Sin publicar");
-                }else{
-                    tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Publicado");
-                    JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Publicado");
-                    estado=1;
-                }
-                tablaPublicaciones.refresh();
-                PublicacionDAO publicacionDAO = new PublicacionDAO();
-                try {
-                    publicacionDAO.actualizarPublicacion(estado,tablaPublicaciones.getSelectionModel().getSelectedItem().getId());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
     }
 
     private void llenarListaPublicaciones(){
@@ -130,7 +99,7 @@ public class Publicaciones implements Initializable {
         }
     }
     @FXML
-    void tableOnStart(ActionEvent event) {
+    void tableOnStart(MouseEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setHeaderText(null);
         alert.setTitle("Desea guardar los cambios");
@@ -138,19 +107,23 @@ public class Publicaciones implements Initializable {
         Optional<ButtonType> action = alert.showAndWait();
         int estado =0;
         if (action.get()==ButtonType.OK){
-            if (tablaPublicaciones.getSelectionModel().getSelectedItem().getEstadoTabla().equals("Publicado")){
+            if (tablaPublicaciones.getSelectionModel().getSelectedItem().getEstadoTabla().equals("Publicado"))
+            {
                 tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Sin Publicar");
                 JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Sin publicar");
-            }else{
+            }else
+            {
                 tablaPublicaciones.getSelectionModel().getSelectedItem().setEstadoTabla("Publicado");
                 JOptionPane.showMessageDialog(null,"El estado se ha cambiado a: Publicado");
                 estado=1;
             }
             tablaPublicaciones.refresh();
             PublicacionDAO publicacionDAO = new PublicacionDAO();
-            try {
+            try
+            {
                 publicacionDAO.actualizarPublicacion(estado,tablaPublicaciones.getSelectionModel().getSelectedItem().getId());
-            } catch (SQLException e) {
+            } catch (SQLException e)
+            {
                 throw new RuntimeException(e);
             }
         }
