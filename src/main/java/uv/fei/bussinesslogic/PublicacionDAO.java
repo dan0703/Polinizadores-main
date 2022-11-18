@@ -1,16 +1,13 @@
 package uv.fei.bussinesslogic;
 
-import javafx.scene.control.CheckBox;
 import uv.fei.dataaccess.ConexionBD;
 import uv.fei.domain.Publicacion;
 import uv.fei.domain.Singleton;
 import uv.fei.domain.TablaPublicaciones;
 
-import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class PublicacionDAO implements IPublicacionDAO{
     @Override
@@ -36,7 +33,7 @@ public class PublicacionDAO implements IPublicacionDAO{
 
     @Override
     public boolean registrarPublicacion(Publicacion publicacion) throws SQLException {
-        boolean flag = false;
+        boolean flag;
         ConexionBD conexionBD = new ConexionBD();
         String query = "INSERT INTO publicacion ( `titulo`, `fecha`, `descripcion`, `referencias`, `estado`, `idUsuario`)VALUES (?,?,?,?,?,?)";
         try (Connection connection =  conexionBD.openConnection()){
@@ -48,7 +45,6 @@ public class PublicacionDAO implements IPublicacionDAO{
             statement.setInt(5, 0);
             statement.setInt(6, Singleton.getId());
             int executeUpdate = statement.executeUpdate();
-            ResultSet resultSet = statement.getGeneratedKeys();
             if(executeUpdate == 0){
                 throw new SQLException("Error al agregar un usuario");
             }else {

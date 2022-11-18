@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,7 +44,17 @@ public class RegistrarPublicacion implements Initializable {
 
     @FXML
     void buttonPublish_Clicked(ActionEvent event) {
-        registrarNuevapublicacion();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("Nueva Publicación");
+        alert.setContentText("¿Deseas realmente guardar Publicacion?");
+        Optional<ButtonType> action = alert.showAndWait();
+        if (action.get().equals(ButtonType.OK)){
+            registrarNuevapublicacion();
+            htmlEditor.setHtmlText("");
+            tituloField.setText("");
+        }
+
     }
 
     @FXML

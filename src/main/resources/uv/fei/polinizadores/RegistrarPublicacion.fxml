@@ -19,7 +19,7 @@
         </Label>
         <TextField fx:id="tituloField" layoutX="105.0" layoutY="87.0" prefHeight="25.0" prefWidth="205.0" promptText="INGRESA EL TITULO" />
         <Button fx:id="buttonPublish" layoutX="615.0" layoutY="422.0" mnemonicParsing="false" onAction="#buttonPublish_Clicked" style="-fx-background-color: #001CFF;" text="Publicar" textFill="WHITE" />
-        <Button fx:id="buttonCancel" layoutX="18.0" layoutY="422.0" mnemonicParsing="false" onAction="#ButtonCancel_Clicked" style="-fx-background-color: #FF6666;" text="Cancelar" textFill="WHITE" />
+        <Button fx:id="buttonCancel" layoutX="18.0" layoutY="422.0" mnemonicParsing="false" onAction="#ButtonCancel_Clicked" style="-fx-background-color: #FF6666;" text="Regresar" textFill="WHITE" />
         <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" layoutX="18.0" layoutY="132.0" prefHeight="272.0" prefWidth="656.0" />
         <Label layoutX="31.0" layoutY="33.0" text="Autor:">
             <font>
